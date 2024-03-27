@@ -1,2 +1,5 @@
 # AWS folder is just for testing
 aws/
+
+# Ignore node_modules/
+node_modules/
