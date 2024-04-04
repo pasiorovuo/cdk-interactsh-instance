@@ -1,19 +1,24 @@
 
 # Interact.sh Server CDK Construct
 
-This construct implements an easy-to-use, cheap-to-run Interact.sh instance. It is a semi-highly available
-implementation where only a single server is running at a time, but an AutoScaling Group is used to achieve high
-availability: In case the instance is terminated, ASG spins up a new instance and continues where it was.
+This construct implements an easy-to-use, cheap-to-run Interact.sh instance (https://github.com/projectdiscovery/interactsh).
+It is a semi-highly available implementation where only a single server is running at a time, but an AutoScaling Group
+is used to achieve higher availability: In case the instance is terminated, ASG spins up a new instance and continues
+where it was.
 
-## Usage
+AWS EC2 instance type used is `t4g.nano`. It is statically defined at the moment.
 
-Interact.sh requires changes at your domain registrar. The elastic IP address needs to be provisioned separately from the Interact.sh construct, to avoid changing the IP unnecessarily. Below is a code snippet for getting started with the construct.
+## Installation and usage
+
+Interact.sh requires changes at your domain registrar (see README of Interact.sh project). To avoid change of IP address
+the elastic IP address needs to be provisioned separately from the Interact.sh construct. Below is a code snippet for
+getting started with the construct. The construct can be installed with `npm install cdk-interactsh-instance`.
 
 ```typescript
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { CfnEIP, IpAddresses, KeyPair, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { InteractshInstance } from 'interactsh-instance';
+import { InteractshInstance } from 'cdk-interactsh-instance';
 
 const domains = 'example.com';
 const token = `<your secure token - DO NOT USE THIS DEFAULT ${(Math.random() + 1).toString(36).substring(2)}>`;
@@ -50,9 +55,9 @@ export class MyStack extends Stack {
         });
     }
 }
-````
+```
 
-## Remote access
+## Instance remote access
 
 Instance enables AWS SSM for remote management. SSH access can be utilized by adding following into `~/.ssh/config`:
 
@@ -64,16 +69,28 @@ host i-* mi-*
 
 And then by executing `ssh ec2-user@<interact.sh instance id>`.
 
+## Instance information
+
+Interact.sh installs its files in `/var/lib/interactsh-server`. That location is the only location that's persisted over
+instance terminations. Be careful not to store files outside the folder.
+
+- `/var/lib/interactsh-server/data`: Persistent storage for Interact.sh
+- `/var/lib/interactsh-server/www`: Files shared over HTTP(S)
+- `/var/lib/interactsh-server/ftp`: Files shared over FTP
+
+Other files and folders can be placed within `/var/lib/interactsh-server`.
+
 ## Supported protocols
 
 Interact.sh supports several protocols for logging interactions. Following are enabled:
 
-- `tcp:21/ftp`: Folder `/var/lib/interactsh-server/ftp` on the server is available via FTP.
+- `tcp:21/ftp`
 - `tcp:25/smtp`
-- `udp:53/dns` and `tcp:53/dns`
-- `tcp:80/http`: Folder `/var/lib/interactsh-server/www` on the server is available via HTTP.
+- `udp:53/dns`
+- `tcp:53/dns`
+- `tcp:80/http`
 - `tcp:389/ldap`
-- `tcp:443/https`: Folder `/var/lib/interactsh-server/www` on the server is available via HTTPS.
+- `tcp:443/https`
 - `tcp:465/smtps` implicit TLS
 - `tcp:587/smtps` STARTTLS
 

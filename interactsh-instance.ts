@@ -36,13 +36,13 @@ import {
 import { Construct } from 'constructs';
 
 export interface InteractshInstanceProps {
-    domains: string | string[];
-    eip: CfnEIP;
-    image?: string;
-    keyPair: IKeyPair;
-    token: string;
-    volumeSize?: number;
-    vpc: IVpc;
+    domains: string | string[]; // Domain or list of domains to listen for
+    eip: CfnEIP; // Elastic IP address the instance associates with itself
+    image?: string; // Docker image, defaults to projectdiscovery/interactsh-server:latest
+    keyPair: IKeyPair; // SSH keypair used to connect to the instance
+    token: string; // Authentication token
+    volumeSize?: number; // Size of persistent storage volume
+    vpc: IVpc; // VPC in which to place the instance (public subnet in first availability zone is used)
 }
 
 interface UserDataProps {
