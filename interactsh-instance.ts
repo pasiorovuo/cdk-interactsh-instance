@@ -19,7 +19,6 @@ import {
     Peer,
     Port,
     SecurityGroup,
-    SubnetType,
     UserData,
     Volume,
 } from 'aws-cdk-lib/aws-ec2';
